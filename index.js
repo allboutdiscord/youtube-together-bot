@@ -1,58 +1,182 @@
-const express = require('express')
-const app = express();
-const port = 3000
+const client = new(require("discord.js").Client)
+const {
+    MessageEmbed
+} = require('discord.js');
+const fetch = require('node-fetch')
+const {
+    Slash
+} = require("discord-slash-commands");
+const slash = new Slash({
+    client: client
+})
+const embed = new MessageEmbed();
 
-app.get('/', (req, res) => res.send('Yo boi!!'))
+const keepAlive = require('./keepAlive.js');
 
-app.listen(port, () =>
-console.log(`Your app is listening to http://localhost:${port}`)
-);
-
-const Discord = require("discord.js")
-const fetch = require("node-fetch");
-
-const client = new Discord.Client()
-
-const config = {
-    "token": (process.env.token) ,
-    "prefix": "!"
-}
-
-client.login(config.token)
-
-client.on("ready",()=>{
-    console.log(`BOT ${client.user.tag} Has now been launched!! 🚀 Coded by 365 ɢᴀᴍɪɴɢ ɴ ᴍᴏʀᴇ_2.0#0002`)
-    client.user.setActivity("MINIGAMES", {type:"COMPETING"})
+slash.on("create", (d) => {
+    console.log(`Command created: ${JSON.parse(d.config.data).name}`)
 })
 
-client.on("message", async (message) => {
-    if(!message.guild || message.author.bot || !message.content.trim().startsWith(config.prefix)) return;
-    // "!ytt asda" --> "ytt asda" --> ["ytt", "asda"]
-    var args = message.content.slice(config.prefix.length).trim().split(" ")
-    // ["ytt", "asda"] --> cmd = "ytt" & ["asda"]
-    var cmd = args.shift().toLowerCase()
+slash.on("command", async (command) => {
+    if (command.name === "activities") {
+        let channel = client.channels.cache.get(command.options.find(m => m.name === "channel").value);
+        if (channel.type !== "voice") return command.callback("Channel must be a voice channel.")
+        if (command.options.find(m => m.name === "type").value === "yt") {
+            fetch(`https://discord.com/api/v8/channels/${channel.id}/invites`, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        max_age: 86400,
+                        max_uses: 0,
+                        target_application_id: "755600276941176913",
+                        target_type: 2,
+                        temporary: false,
+                        validate: null
+                    }),
+                    headers: {
+                        "Authorization": `Bot ${client.token}`,
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(res => res.json())
+                .then(invite => {
+                    embed.setTitle("Activity added!")
+                    embed.setDescription(`Added **YouTube Together** to [${channel.name}](https://discord.gg/${invite.code})\n> Click on the hyperlink to join.`)
+                    embed.setFooter(`Requested by ${command.author.username + "#" + command.author.discriminator}`)
+                    embed.setColor("#7289DA")
+                    command.callback({
+                        embeds: embed
+                    });
+                })
 
-    const { channel } = message.member.voice;
-    if(!channel) return message.reply("You need to join a Voice Channel")
+        }
+        if (command.options.find(m => m.name === "type").value === "pn") {
+            fetch(`https://discord.com/api/v8/channels/${channel.id}/invites`, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        max_age: 86400,
+                        max_uses: 0,
+                        target_application_id: "755827207812677713",
+                        target_type: 2,
+                        temporary: false,
+                        validate: null
+                    }),
+                    headers: {
+                        "Authorization": `Bot ${client.token}`,
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(res => res.json())
+                .then(invite => {
+                    embed.setTitle("Activity added!")
+                    embed.setDescription(`Added **Poker Night** to [${channel.name}](https://discord.gg/${invite.code})\n> Click on the hyperlink to join.`)
+                    embed.setFooter(`Requested by ${command.author.username + "#" + command.author.discriminator}`)
+                    embed.setColor("#7289DA")
+                    command.callback({
+                        embeds: embed
+                    });
+                })
 
-    if(cmd == "ytt" || cmd == "youtubetogether"){
-        fetch(`https://discord.com/api/v8/channels/${channel.id}/invites`, {
-            method: "POST",
-            body: JSON.stringify({
-                max_age: 86400,
-                max_uses: 0,
-                target_application_id: "755600276941176913",
-                target_type: 2,
-                temporary: false,
-                validate: null
-            }),
-            headers: {
-                "Authorization": `Bot ${config.token}`,
-                "Content-Type": "application/json"
-            }
-        }).then(res => res.json())
-        .then(invite =>{
-            if(!invite.code) return message.reply(":x: Cannot start minigame")
-            message.channel.send(`Click on the **__Link__** to start the GAME:\n> https://discord.com/invite/${invite.code}`)
-        })
-}})
+        }
+        if (command.options.find(m => m.name === "type").value === "bio") {
+            fetch(`https://discord.com/api/v8/channels/${channel.id}/invites`, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        max_age: 86400,
+                        max_uses: 0,
+                        target_application_id: "773336526917861400",
+                        target_type: 2,
+                        temporary: false,
+                        validate: null
+                    }),
+                    headers: {
+                        "Authorization": `Bot ${client.token}`,
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(res => res.json())
+                .then(invite => {
+                    embed.setTitle("Activity added!")
+                    embed.setDescription(`Added **Betrayal.io** to [${channel.name}](https://discord.gg/${invite.code})\n> Click on the hyperlink to join.`)
+                    embed.setFooter(`Requested by ${command.author.username + "#" + command.author.discriminator}`)
+                    embed.setColor("#7289DA")
+                    command.callback({
+                        embeds: embed
+                    });
+                })
+
+        }
+        if (command.options.find(m => m.name === "type").value === "fio") {
+            fetch(`https://discord.com/api/v8/channels/${channel.id}/invites`, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        max_age: 86400,
+                        max_uses: 0,
+                        target_application_id: "814288819477020702",
+                        target_type: 2,
+                        temporary: false,
+                        validate: null
+                    }),
+                    headers: {
+                        "Authorization": `Bot ${client.token}`,
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(res => res.json())
+                .then(invite => {
+                    embed.setTitle("Activity added!")
+                    embed.setDescription(`Added **Fishington.io** to [${channel.name}](https://discord.gg/${invite.code})\n> Click on the hyperlink to join.`)
+                    embed.setFooter(`Requested by ${command.author.username + "#" + command.author.discriminator}`)
+                    embed.setColor("#7289DA")
+                    command.callback({
+                        embeds: embed
+                    });
+                })
+
+        }
+    }
+})
+
+client.on("ready", () => {
+    console.log("Ready");
+    slash.create({
+        guildOnly: false,
+        data: {
+            name: "activities",
+            description: "Voice channel activities",
+            options: [{
+                    name: "channel",
+                    description: "Select the voice channel you want.",
+                    required: true,
+                    type: 7,
+                },
+                {
+                    name: "type",
+                    description: "Type of activity.",
+                    required: true,
+                    type: 3,
+                    choices: [{
+                            name: "YouTube Together",
+                            value: "yt"
+                        },
+                        {
+                            name: "Betrayal.io",
+                            value: "bio"
+                        },
+                        {
+                            name: "Poker Night",
+                            value: "pn"
+                        },
+                        {
+                            name: "Fishington.io",
+                            value: "fio"
+                        }
+                    ]
+                }
+            ]
+        }
+    })
+})
+
+keepAlive();
+
+client.login(process.env.TOKEN)
