@@ -1,4 +1,4 @@
-# youtube together bot
+# Youtube Together Bot
 Voice Activities for Discord (with Slash Commands)
 
 # Deployment
